@@ -23,6 +23,8 @@ try {
                 ->setCookieDomain(COOKIE_HOST_NAME)
                 ->setSessionName('a1crm')
         )
+        ->add(WebAppAjaxHandler::create())
+        ->add(WebAppLinkerInjector::create()->setLogClassName('SiteLog')->setBaseUrl(PATH_WEB_URL))
         ->add(WebAppControllerResolverHandler::create())
         ->add(WebAppControllerHandler::create())
         ->add(WebAppViewHandler::create());

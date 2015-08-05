@@ -15,11 +15,6 @@ class IndexController extends BaseController
 
     protected $defaultAction = 'index';
 
-    /**
-     * Определяет, какое действие должен выполнить контроллер, вызывает его и возвращает результат
-     * @param $request HttpRequest
-     * @return ModelAndView
-     **/
     public function handleRequest(HttpRequest $request)
     {
         return $this->resolveAction($request);
@@ -27,7 +22,7 @@ class IndexController extends BaseController
 
     public function indexAction(HttpRequest $request)
     {
-        $this->meta->setTitle('Внимание! Доступ к странице ограничен.');
+        $this->meta->setTitle('Р’РЅРёРјР°РЅРёРµ! Р”РѕСЃС‚СѓРї Рє СЂРµСЃСѓСЂСЃСѓ РѕРіСЂР°РЅРёС‡РµРЅ.');
         return $this->getMav('error');
     }
 
