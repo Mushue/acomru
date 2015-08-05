@@ -55,7 +55,7 @@ define('PATH_SERVICES', PATH_BASE . 'Services' . DIRECTORY_SEPARATOR);
 define('PATH_VIEWS', PATH_BASE . 'Views' . DIRECTORY_SEPARATOR);
 define('PATH_VENDORS', PATH_BASE . 'Vendors' . DIRECTORY_SEPARATOR);
 define('PATH_CLASSES', PATH_MODELS);
-
+define('PATH_LOGS', PATH_BASE . 'Logs' . DIRECTORY_SEPARATOR);
 
 define('PATH_ONPHP', PATH_VENDORS . 'onphp-framework' . DIRECTORY_SEPARATOR);
 define('PATH_ONPHP_CORE', PATH_ONPHP);
@@ -171,6 +171,9 @@ AutoloaderClassPathCache::create()
         PATH_COMPONENTS,
         PATH_COMPONENTS . 'Utils',
         PATH_COMPONENTS . 'Flow',
+        PATH_COMPONENTS . 'Classes',
+        PATH_COMPONENTS . 'Exceptions',
+        PATH_COMPONENTS . 'Interfaces',
         PATH_CONFIGURATIONS,
         PATH_CONTENT,
         PATH_CONTROLLERS,
@@ -192,3 +195,5 @@ AutoloaderClassPathCache::create()
     ))
     ->addPath(PATH_VENDORS . 'Whoops', '\\Whoops')
     ->register();
+
+require_once PATH_CONFIGURATIONS . 'application.config.php';

@@ -4,7 +4,7 @@ try {
 
     require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Configurations' . DIRECTORY_SEPARATOR . 'configuration.inc.php';
 
-    if (defined('DEBUG') && DEBUG) {
+    if (defined('__LOCAL_DEBUG__') && __LOCAL_DEBUG__) {
         $whoops = new \Whoops\Run();
         $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
         $whoops->register();
@@ -21,10 +21,9 @@ try {
         ->add(
             WebAppSessionHandler::create()
                 ->setCookieDomain(COOKIE_HOST_NAME)
-                ->setSessionName('a1crm')
+                ->setSessionName('acomru')
         )
         ->add(WebAppAjaxHandler::create())
-        ->add(WebAppLinkerInjector::create()->setLogClassName('SiteLog')->setBaseUrl(PATH_WEB_URL))
         ->add(WebAppControllerResolverHandler::create())
         ->add(WebAppControllerHandler::create())
         ->add(WebAppViewHandler::create());
@@ -32,5 +31,11 @@ try {
     $application->run();
 
 } catch (Exception $e) {
-    HeaderUtils::sendHttpStatus(new HttpStatus(HttpStatus::CODE_500));
+
+    if (defined('__LOCAL_DEBUG__') && __LOCAL_DEBUG__) {
+        $whoops->handleException($e);
+    } else {
+        Logger::me()->exception($e);
+        HeaderUtils::sendHttpStatus(new HttpStatus(HttpStatus::CODE_500));
+    }
 }
