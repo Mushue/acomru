@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<!DOCTYPE metaconfiguration SYSTEM "meta.dtd">
+<metaconfiguration>
+    <include file="test/test.xml" />
+</metaconfiguration>

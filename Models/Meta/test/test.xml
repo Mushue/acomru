@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE metaconfiguration SYSTEM "meta.dtd">
+<metaconfiguration>
+    <classes>
+        <class name="TestProject" table="test.project">
+            <properties>
+                <identifier name="id" />
+                <property name="name" type="String" required="true" />
+                <property name="createdAt" type="TimestampTZ" required="true" />
+                <property name="updatedAt" type="TimestampTZ" required="false" />
+                <property name="deletedAt" type="TimestampTZ" required="false" />
+            </properties>
+            <pattern name="StraightMapping" />
+        </class>
+    </classes>
+</metaconfiguration>
