@@ -65,6 +65,13 @@ define('PATH_ONPHPUTILS', PATH_VENDORS . 'onPHPUtils' . DIRECTORY_SEPARATOR);
 define('PATH_WEB', 'http://acomru.test/');
 define('COOKIE_HOST_NAME', 'acomru.test');
 
+define('ONPHP_CORE_PATH', PATH_ONPHP . 'core' . DIRECTORY_SEPARATOR);
+define('ONPHP_MAIN_PATH', PATH_ONPHP . 'main' . DIRECTORY_SEPARATOR);
+define('ONPHP_META_PATH', PATH_ONPHP . 'meta' . DIRECTORY_SEPARATOR);
+define('ONPHP_UI_PATH', PATH_ONPHP . 'UI' . DIRECTORY_SEPARATOR);
+define('ONPHP_META_CLASSES', PATH_CLASSES);
+
+
 define('PATH_WEB_URL', PATH_WEB . 'index.php?');
 define('PATH_WEB_CSS', PATH_WEB . 'Styles/');
 define('PATH_WEB_IMG', PATH_WEB . 'Images/');

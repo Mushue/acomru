@@ -48,14 +48,21 @@ Possible options:
 		define('ONPHP_META_PATTERNS', ONPHP_META_PATH.'patterns'.DIRECTORY_SEPARATOR);
 		define('ONPHP_META_TYPES', ONPHP_META_PATH.'types'.DIRECTORY_SEPARATOR);
 
-		AutoloaderPool::get('onPHP')->
-			addPaths(array(
-				ONPHP_META_BUILDERS,
-				ONPHP_META_PATTERNS,
-				ONPHP_META_TYPES,
-			));
+//		AutoloaderPool::get('onPHP')->
+//			addPaths(array(
+//				ONPHP_META_BUILDERS,
+//				ONPHP_META_PATTERNS,
+//				ONPHP_META_TYPES,
+//			));
+//
+//		Assert::isTrue(defined('PATH_CLASSES'), 'constant PATH_CLASSES must be defined');
 
-		Assert::isTrue(defined('PATH_CLASSES'), 'constant PATH_CLASSES must be defined');
+		set_include_path(
+			get_include_path() . PATH_SEPARATOR
+			. ONPHP_META_BUILDERS . PATH_SEPARATOR
+			. ONPHP_META_PATTERNS . PATH_SEPARATOR
+			. ONPHP_META_TYPES . PATH_SEPARATOR
+		);
 		
 		if (!defined('ONPHP_META_DAO_DIR'))
 			define(
