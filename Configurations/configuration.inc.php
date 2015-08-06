@@ -201,11 +201,11 @@ AutoloaderClassPathCache::create()
         PATH_VENDORS
     ))
     ->addPath(PATH_VENDORS . 'Whoops', '\\Whoops')
-    ->addPath(PATH_VENDORS . 'koolkode' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'src',
+    ->addPath(PATH_VENDORS . 'kk' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'src',
         '\\KoolKode\Config')
-    ->addPath(PATH_VENDORS . 'koolkode' . DIRECTORY_SEPARATOR . 'context' . DIRECTORY_SEPARATOR . 'src',
+    ->addPath(PATH_VENDORS . 'kk' . DIRECTORY_SEPARATOR . 'context' . DIRECTORY_SEPARATOR . 'src',
         '\\KoolKode\Context')
-    ->addPath(PATH_VENDORS . 'koolkode' . DIRECTORY_SEPARATOR . 'util' . DIRECTORY_SEPARATOR . 'src',
+    ->addPath(PATH_VENDORS . 'kk' . DIRECTORY_SEPARATOR . 'util' . DIRECTORY_SEPARATOR . 'src',
         '\\KoolKode\Util')
     ->register();
 
