@@ -1,0 +1,45 @@
+{
+  "name": "koolkode/util",
+  "description": "KoolKode utilities",
+  "keywords": [
+    "koolkode",
+    "util"
+  ],
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/koolkode/util",
+  "authors": [
+    {
+      "name": "Martin Schröder",
+      "email": "m.schroeder2007@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.7",
+    "ircmaxell/random-lib": "~1.0"
+  },
+  "suggest": {
+    "ircmaxell/random-lib": "Provides a more sophisticated random byte generator that is extensible"
+  },
+  "autoload": {
+    "psr-4": {
+      "KoolKode\\Util\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "KoolKode\\Util\\": "test/src/"
+    }
+  },
+  "minimum-stability": "stable",
+  "extra": {
+    "preferred-install": "dist",
+    "optimize-autoloader": true,
+    "branch-alias": {
+      "dev-master": "0.1.x-dev"
+    }
+  }
+}

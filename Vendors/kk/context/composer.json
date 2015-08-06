@@ -1,0 +1,45 @@
+{
+  "name": "koolkode/context",
+  "description": "KoolKode Context and Dependency Management",
+  "keywords": [
+    "koolkode",
+    "context",
+    "di",
+    "scope"
+  ],
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/koolkode/context",
+  "authors": [
+    {
+      "name": "Martin Schröder",
+      "email": "m.schroeder2007@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": ">=5.5.0",
+    "koolkode/config": "~0.1",
+    "koolkode/util": "^0.1.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "KoolKode\\Context\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "KoolKode\\Context\\": "test/src/"
+    }
+  },
+  "extra": {
+    "preferred-install": "dist",
+    "optimize-autoloader": true,
+    "branch-alias": {
+      "dev-master": "0.1.x-dev"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupStaticAttributes="false" backupGlobals="false" processIsolation="false"
+         bootstrap="../vendor/autoload.php">
+
+    <testsuites>
+        <testsuite name="unit">
+            <directory suffix="Test.php">./unit</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">../src/</directory>
+            <exclude>
+                <directory suffix="Interface.php">../src/</directory>
+                <directory suffix="Exception.php">../src/</directory>
+                <file>../src/Bind/AbstractContainerModule.php</file>
+                <file>../src/Bind/Inject.php</file>
+                <file>../src/Bind/Marker.php</file>
+                <file>../src/CompiledCodeFragment.php</file>
+                <file>../src/Scope/ApplicationScoped.php</file>
+                <file>../src/Scope/Dependent.php</file>
+                <file>../src/Scope/Singleton.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+
+</phpunit>
