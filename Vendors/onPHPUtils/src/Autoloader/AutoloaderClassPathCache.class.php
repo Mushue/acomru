@@ -34,6 +34,14 @@
 		}
 		
 		/**
+		 * @return NamespaceResolver
+		 */
+		public function getNamespaceResolver()
+		{
+			return $this->namespaceResolver;
+		}
+
+		/**
 		 * @param NamespaceResolver $namespaceResolver
 		 * @return AutoloaderClassPathCache
 		 */
@@ -41,14 +49,6 @@
 		{
 			$this->namespaceResolver = $namespaceResolver;
 			return $this;
-		}
-		
-		/**
-		 * @return NamespaceResolver
-		 */
-		public function getNamespaceResolver()
-		{
-			return $this->namespaceResolver;
 		}
 		
 		/**
@@ -90,6 +90,7 @@
 		
 		public function autoload($className, $recache = false)
 		{
+
 			if (strpos($className, "\0") !== false) {
 				// we can not avoid fatal error in this case
 				return /* void */;
@@ -124,7 +125,7 @@
 					}
 				}
 			}
-			
+
 			if ($recache || !$this->cache) {
 				$this->cache = $this->namespaceResolver->getClassPathList();
 				$this->cache[self::ONPHP_CLASS_CACHE_CHECKSUM] = $this->checksum;
@@ -156,19 +157,19 @@
 				/* try another auto loader */
 			}
 		}
-		
-		public function register()
+
+		private function getFileName($className)
 		{
-			$this->unregister();
-			spl_autoload_register(array($this, 'autoload'));
-			AutoloaderPool::registerRecache($this);
-			AutoloaderClassNotFound::me()->register();
-		}
-		
-		public function unregister()
-		{
-			AutoloaderPool::unregisterRecache($this);
-			spl_autoload_unregister(array($this, 'autoload'));
+			$className = '\\' . ltrim($className, '\\');
+
+			if (!isset($this->cache[$className]))
+				return;
+
+			$classParts = explode('\\', $className);
+			$onlyClassName = $classParts[count($classParts) - 1];
+
+			return $this->cache[$this->cache[$className]] . $onlyClassName
+			. $this->namespaceResolver->getClassExtension();
 		}
 		
 		/**
@@ -179,19 +180,19 @@
 		{
 			include $fileName;
 		}
-		
-		private function getFileName($className)
+
+		public function register()
 		{
-			$className = '\\'.ltrim($className, '\\');
+			$this->unregister();
+			spl_autoload_register(array($this, 'autoload'));
+			AutoloaderPool::registerRecache($this);
+			AutoloaderClassNotFound::me()->register();
+		}
 
-			if (!isset($this->cache[$className]))
-				return;
-
-			$classParts = explode('\\', $className);
-			$onlyClassName = $classParts[count($classParts) - 1];
-
-			return $this->cache[$this->cache[$className]].$onlyClassName
-				.$this->namespaceResolver->getClassExtension();
+		public function unregister()
+		{
+			AutoloaderPool::unregisterRecache($this);
+			spl_autoload_unregister(array($this, 'autoload'));
 		}
 	}
 ?>

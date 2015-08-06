@@ -198,11 +198,15 @@ AutoloaderClassPathCache::create()
         PATH_REPOSITORIES,
         PATH_SERVICES,
         PATH_VIEWS,
-        PATH_VENDORS,
+        PATH_VENDORS
     ))
     ->addPath(PATH_VENDORS . 'Whoops', '\\Whoops')
-    ->addPath(PATH_VENDORS . 'koolkode\context', '\\KoolKode\Context')
-    ->addPath(PATH_VENDORS . 'koolkode\config', '\\KoolKode\Config')
+    ->addPath(PATH_VENDORS . 'koolkode' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'src',
+        '\\KoolKode\Config')
+    ->addPath(PATH_VENDORS . 'koolkode' . DIRECTORY_SEPARATOR . 'context' . DIRECTORY_SEPARATOR . 'src',
+        '\\KoolKode\Context')
+    ->addPath(PATH_VENDORS . 'koolkode' . DIRECTORY_SEPARATOR . 'util' . DIRECTORY_SEPARATOR . 'src',
+        '\\KoolKode\Util')
     ->register();
 
 require_once PATH_CONFIGURATIONS . 'application.config.php';
