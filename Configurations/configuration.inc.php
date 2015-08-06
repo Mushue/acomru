@@ -201,6 +201,7 @@ AutoloaderClassPathCache::create()
         PATH_VENDORS,
     ))
     ->addPath(PATH_VENDORS . 'Whoops', '\\Whoops')
+    ->addPath(PATH_VENDORS . 'koolkode\context', '\\KoolKode\Context')
     ->register();
 
 require_once PATH_CONFIGURATIONS . 'application.config.php';
