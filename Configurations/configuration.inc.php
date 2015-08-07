@@ -194,13 +194,13 @@ AutoloaderClassPathCache::create()
         PATH_MODELS . 'DAOs',
         PATH_MODELS . 'Proto',
         PATH_MODELS . 'Meta',
-        PATH_MODULES,
         PATH_REPOSITORIES,
         PATH_SERVICES,
         PATH_VIEWS,
         PATH_VENDORS
     ))
     ->addPath(PATH_VENDORS . 'Whoops', '\\Whoops')
+    ->addPath(PATH_MODULES, '\\Modules')
     ->addPath(PATH_VENDORS . 'kk' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'src',
         '\\KoolKode\Config')
     ->addPath(PATH_VENDORS . 'kk' . DIRECTORY_SEPARATOR . 'context' . DIRECTORY_SEPARATOR . 'src',

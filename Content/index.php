@@ -1,14 +1,14 @@
 <?php
 
+require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Configurations' . DIRECTORY_SEPARATOR . 'configuration.inc.php';
+
+if (defined('__LOCAL_DEBUG__') && __LOCAL_DEBUG__) {
+    $whoops = new \Whoops\Run();
+    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+    $whoops->register();
+}
+
 try {
-
-    require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Configurations' . DIRECTORY_SEPARATOR . 'configuration.inc.php';
-
-    if (defined('__LOCAL_DEBUG__') && __LOCAL_DEBUG__) {
-        $whoops = new \Whoops\Run();
-        $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
-        $whoops->register();
-    }
 
     $application = WebApplication::create()
         //->setRequest($request)

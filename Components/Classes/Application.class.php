@@ -16,6 +16,9 @@ final class Application extends Singleton implements IApplication
      */
     protected $container;
 
+    /** @var  \KoolKode\Config\Configuration */
+    protected $config;
+
     protected function __construct()
     {/*_*/
     }
@@ -28,11 +31,17 @@ final class Application extends Singleton implements IApplication
         return Singleton::getInstance(__CLASS__);
     }
 
+    /**
+     * @return string
+     */
     public function getServerType()
     {
         return $this->serverType;
     }
 
+    /**
+     * @param array $settings
+     */
     public function init(array $settings = array())
     {
         $this->environment($settings['environment']);
@@ -44,8 +53,11 @@ final class Application extends Singleton implements IApplication
 
     }
 
-    protected /* void */
-    function environment($environment)
+    /**
+     * @param $environment
+     * @throws WrongArgumentException
+     */
+    protected function environment($environment)
     {
         Assert::isNotEmpty($environment, "'environment' should not be empty");
         $this->serverType = $environment;
@@ -57,19 +69,32 @@ final class Application extends Singleton implements IApplication
     protected function createContainer()
     {
 
-        $loader = new ContainerModuleLoader();
-        $scopes = new \KoolKode\Context\Scope\ScopeLoader();
-        $scopes->registerScope(new \KoolKode\Context\Scope\ApplicationScopeManager());
-        $scopes->registerScope(new \KoolKode\Context\Scope\SingletonScopeManager());
+        $loader = new \KoolKode\Config\ConfigurationLoader();
+        $loader->registerLoader(new \KoolKode\Config\PhpConfigurationLoader());
 
-        $this->container = new \KoolKode\Context\Container($loader, $scopes);
-        $this->container->bindInstance(IApplication::class, $this);
-        static::$containerStack->push($this->container);
+        $file = new \SplFileInfo(PATH_MODULES . 'modules.config.php');
+        $source = new \KoolKode\Config\ConfigurationSource($file);
 
-        foreach ($scopes as $scope) {
-            $this->container->registerScope($scope);
+        $this->config = $source->loadConfiguration($loader);
+        $moduleLoader = new \KoolKode\Context\Bind\ContainerModuleLoader();
+
+        if ($this->config->get('modules.config')) {
+            foreach ($this->config->get('modules.config') as $moduleIndex => $moduleName) {
+                $moduleLoader->registerModule($moduleName);
+            }
         }
 
+        $builder = new \KoolKode\Context\Bind\ContainerBuilder();
+
+        /** @var \KoolKode\Context\Bind\ContainerModuleInterface $module */
+        foreach ($moduleLoader as $module) {
+            $module->build($builder);
+        }
+
+        $this->container = $builder->build();
+        $this->container->bindInstance(IApplication::class, $this);
+
+        static::$containerStack->push($this->container);
 
         return $this;
     }
@@ -79,6 +104,15 @@ final class Application extends Singleton implements IApplication
      */
     public function getContainer()
     {
-        return static::$containerStack->pop();
+        return static::$containerStack->top();
+    }
+
+    /**
+     * @return \KoolKode\Config\Configuration
+     */
+    public function getConfiguration()
+    {
+        return $this->config;
     }
 }
+
