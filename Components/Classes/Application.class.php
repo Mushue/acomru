@@ -72,11 +72,13 @@ final class Application extends Singleton implements IApplication
         $loader = new \KoolKode\Config\ConfigurationLoader();
         $loader->registerLoader(new \KoolKode\Config\PhpConfigurationLoader());
 
+        $moduleLoader = new \KoolKode\Context\Bind\ContainerModuleLoader();
+
         $file = new \SplFileInfo(PATH_MODULES . 'modules.config.php');
         $source = new \KoolKode\Config\ConfigurationSource($file);
 
         $this->config = $source->loadConfiguration($loader);
-        $moduleLoader = new \KoolKode\Context\Bind\ContainerModuleLoader();
+
 
         if ($this->config->get('modules.config')) {
             foreach ($this->config->get('modules.config') as $moduleIndex => $moduleName) {

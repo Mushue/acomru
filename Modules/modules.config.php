@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'MyModule' => new \Modules\MyModule\Module()
+    'HttpRequest' => new \Modules\HttpRequest\HttpRequestModule()
 ];

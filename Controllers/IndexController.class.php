@@ -1,5 +1,6 @@
 <?php
 
+
 class IndexController extends BaseController
 {
     protected $methodMap = array(
@@ -17,7 +18,9 @@ class IndexController extends BaseController
     public function indexAction(HttpRequest $request)
     {
         $this->meta->setTitle('Внимание! Доступ к ресурсу ограничен.');
-        var_dump(Application::me()->getContainer()->get('Modules\MyModule\ModuleInterface'));
+        /** @var HttpRequestInterface $httpRequest */
+        $httpRequest = Application::me()->getContainer()->get(HttpRequestInterface::class);
+        $request = $httpRequest->createFromGlobals();
         return $this->getMav('error');
     }
 
