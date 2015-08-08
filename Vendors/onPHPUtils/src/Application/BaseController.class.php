@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************************
  *   Copyright (C) 2011 by Sergey Sergeev, Alexandr Solomatin,             *
  *   Alexey Denisov                                                        *
@@ -10,123 +11,137 @@
  *   License, or (at your option) any later version.                       *
  *                                                                         *
  ***************************************************************************/
+abstract class BaseController implements Controller
+{
+    /**
+     * @var Model
+     */
+    protected $model = null;
+    protected $methodMap = array();
+    protected $defaultAction = null;
+    protected $actionName = 'action';
+    protected $path = null;
 
-	abstract class BaseController implements Controller
-	{
-		/**
-		 * @var Model
-		 */
-		protected $model = null;
-		protected $methodMap = array();
-		protected $defaultAction = null;
-		protected $actionName = 'action';
+    /**
+     * @var HeadHelper
+     **/
+    protected $meta = null;
 
-		/**
-		 * @var HeadHelper
-		**/
-		protected $meta	= null;
+    public function __construct()
+    {
+        $this->model = Model::create();
+        $this->setupMeta();
+    }
 
-		public function __construct() {
-			$this->model = Model::create();
-			$this->setupMeta();
-		}
+    protected function setupMeta()
+    {
+        $this->meta = HeadHelper::create();
+        $this->meta->setTitle('');
+        $this->model->set('meta', $this->meta);
 
-		public function getModel() {
-			return $this->model;
-		}
+        return $this;
+    }
 
-		protected function getMav($tpl = 'index', $path = null) {
-			return ModelAndView::create()->
-				setModel($this->model)->
-				setView($this->getViewTemplate($tpl, $path));
-		}
+    public function getModel()
+    {
+        return $this->model;
+    }
 
-		protected function getViewPath() {
-			$className = get_class($this);
-			return substr($className, 0, stripos($className, 'controller'));
-		}
+    protected function getMav($tpl = 'index', $path = null)
+    {
+        if ($this->path) {
+            //$path =  . $path;
+        }
+        return ModelAndView::create()->
+        setModel($this->model)->
+        setView($this->getViewTemplate($tpl, $path));
+    }
 
-		protected function getViewTemplate($tpl, $path = null) {
-			$path = ($path === null ? $this->getViewPath() : $path);
-			return "{$path}/{$tpl}";
-		}
+    protected function getViewTemplate($tpl, $path = null)
+    {
+        $path = ($path === null ? $this->getViewPath() : $path);
+        return "{$path}/{$tpl}";
+    }
 
-		protected function getMavRedirectByUrl($url) {
-			return ModelAndView::create()->setView(
-				CleanRedirectView::create($url)
-			);
-		}
+    protected function getViewPath()
+    {
+        $className = get_class($this);
+        return substr($className, 0, stripos($className, 'controller'));
+    }
 
-		protected function resolveAction(HttpRequest $request, Form $form = null) {
-			if (empty($this->methodMap)) {
-				throw new WrongStateException('You must specify $methodMap array');
-			}
+    protected function getMavRedirectByUrl($url)
+    {
+        return ModelAndView::create()->setView(
+            CleanRedirectView::create($url)
+        );
+    }
 
-			if (!$form) {
-				$form = Form::create();
-			}
+    protected function resolveAction(HttpRequest $request, Form $form = null)
+    {
+        if (empty($this->methodMap)) {
+            throw new WrongStateException('You must specify $methodMap array');
+        }
 
-			$form->
-				add(
-					Primitive::choice($this->actionName)->
-						setList($this->methodMap)->
-						setDefault($this->defaultAction)
-				)->
-				import($request->getGet())->
-				importMore($request->getPost())->
-				importMore($request->getAttached());
+        if (!$form) {
+            $form = Form::create();
+        }
 
-			if ($form->getErrors()) {
-				return ModelAndView::create()->
-					setModel($this->model)->
-					setView(View::ERROR_VIEW);
-			}
+        $form->
+        add(
+            Primitive::choice($this->actionName)->
+            setList($this->methodMap)->
+            setDefault($this->defaultAction)
+        )->
+        import($request->getGet())->
+        importMore($request->getPost())->
+        importMore($request->getAttached());
 
-			if (!$action = $form->getSafeValue($this->actionName)) {
-				$action = $form->get($this->actionName)->getDefault();
-			}
+        if ($form->getErrors()) {
+            return ModelAndView::create()->
+            setModel($this->model)->
+            setView(View::ERROR_VIEW);
+        }
 
-			$method = $this->methodMap[$action];
-			$mav = $this->{$method}($request);
+        if (!$action = $form->getSafeValue($this->actionName)) {
+            $action = $form->get($this->actionName)->getDefault();
+        }
 
-			if ($mav->viewIsRedirect()) {
-				return $mav;
-			}
+        $method = $this->methodMap[$action];
+        $mav = $this->{$method}($request);
 
-			$mav = $this->prepairData($request, $mav);
-			$mav->getModel()->set($this->actionName, $action);
+        if ($mav->viewIsRedirect()) {
+            return $mav;
+        }
 
-			return $mav;
-		}
+        $mav = $this->prepairData($request, $mav);
+        $mav->getModel()->set($this->actionName, $action);
 
-		protected function getControllerVar(HttpRequest $request) {
-			$form = Form::create()->
-				add(
-					Primitive::string($this->ajaxVar)->
-						setDefault('')
-				)->
-				importOne($this->ajaxVar, $request->getGet())->
-				importOneMore($this->ajaxVar, $request->getAttached());
-			$controller = $form->getSafeValue($this->ajaxVar);
-			return $controller;
-		}
+        return $mav;
+    }
 
-		/**
-		 * Дает возможность в наследниках модифицировать model в ModelAndView перед возвращением ее пользователю
-		 * @param HttpRequest $request
-		 * @param ModelAndView $mav
-		 * @return ModelAndView 
-		 */
-		protected function prepairData(HttpRequest $request, ModelAndView $mav) {
-			return $mav;
-		}
+    /**
+     * Дает возможность в наследниках модифицировать model в ModelAndView перед возвращением ее пользователю
+     * @param HttpRequest $request
+     * @param ModelAndView $mav
+     * @return ModelAndView
+     */
+    protected function prepairData(HttpRequest $request, ModelAndView $mav)
+    {
+        return $mav;
+    }
 
-		protected function setupMeta() {
-			$this->meta = HeadHelper::create();
-			$this->meta->setTitle('');
-			$this->model->set('meta', $this->meta);
+    protected function getControllerVar(HttpRequest $request)
+    {
+        $form = Form::create()->
+        add(
+            Primitive::string($this->ajaxVar)->
+            setDefault('')
+        )->
+        importOne($this->ajaxVar, $request->getGet())->
+        importOneMore($this->ajaxVar, $request->getAttached());
+        $controller = $form->getSafeValue($this->ajaxVar);
+        return $controller;
+    }
+}
 
-			return $this;
-		}
-	}
 ?>

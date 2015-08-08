@@ -10,25 +10,31 @@ if (defined('__LOCAL_DEBUG__') && __LOCAL_DEBUG__) {
 
 try {
 
-    $application = WebApplication::create()
-        //->setRequest($request)
+    $request = RouterRewrite::me()->route(HttpRequest::createFromGlobals());
+    Session::start();
+
+    $webKernel = Application::me()->getContainer()->get(WebKernel::class)
+        ->dropVar(WebKernel::OBJ_REQUEST)
+        ->setRequest($request)
         ->setPathWeb(PATH_WEB)
         ->setPathController(PATH_CONTROLLERS)
         ->setPathTemplate(PATH_VIEWS)
         ->setPathTemplateDefault(PATH_VIEWS)
-        ->setServiceLocator(ServiceLocator::create())
-        ->add(WebAppBufferHandler::create())
-        ->add(
-            WebAppSessionHandler::create()
-                ->setCookieDomain(COOKIE_HOST_NAME)
-                ->setSessionName('acomru')
-        )
-        ->add(WebAppAjaxHandler::create())
-        ->add(WebAppControllerResolverHandler::create())
-        ->add(WebAppControllerHandler::create())
-        ->add(WebAppViewHandler::create());
+        ->setServiceLocator(Application::get(ServiceLocator::class))
+        ->add(WebKernelBufferHandler::create())
+        ->add(WebKernelSessionHandler::create()
+            ->setCookieDomain(COOKIE_HOST_NAME)
+            ->setSessionName('acomru')
+        );
 
-    $application->run();
+    Application::me()->registerModules();
+
+    $webKernel->add(WebKernelAjaxHandler::create())
+        ->add(WebKernelControllerResolverHandler::create())
+        ->add(WebKernelControllerHandler::create())
+        ->add(WebKernelViewHandler::create());
+
+    $webKernel->run();
 
 } catch (Exception $e) {
 

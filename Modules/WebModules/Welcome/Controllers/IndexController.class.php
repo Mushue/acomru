@@ -1,7 +1,18 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: mushu_000
+ * Date: 08.08.2015
+ * Time: 14:30
+ */
+
+namespace Modules\WebModules\Welcome\Controllers;
 
 
-class IndexController extends BaseController
+use HttpRequest;
+use ModelAndView;
+
+class IndexController extends \BaseController
 {
     protected $methodMap = array(
         'index' => 'indexAction',
@@ -9,7 +20,11 @@ class IndexController extends BaseController
     );
 
     protected $defaultAction = 'index';
+    protected $path = 'Views';
 
+    /**
+     * @return ModelAndView
+     **/
     public function handleRequest(HttpRequest $request)
     {
         return $this->resolveAction($request);
@@ -17,12 +32,13 @@ class IndexController extends BaseController
 
     public function indexAction(HttpRequest $request)
     {
-        $this->meta->setTitle('Внимание! Доступ к ресурсу ограничен.');
-        return $this->getMav('error');
+        $this->meta->setTitle('Приветттттттт!!!!!!!!!!!!!!');
+        return $this->getMav('error', 'Index');
     }
 
     public function authForbiddenAction(HttpRequest $request)
     {
         return $this->getMav('auth-forbidden');
     }
+
 }

@@ -45,6 +45,55 @@
 			return $this;
 		}
 
+		protected function getControllerNameByArea(InterceptingChain $chain)
+		{
+			$request = $chain->getRequest();
+
+			$area = null;
+			if ($request->hasAttachedVar('area')) {
+				$area = $request->getAttachedVar('area');
+			} elseif ($request->hasGetVar('area')) {
+				$area = $chain->getRequest()->getGetVar('area');
+			} elseif ($request->hasPostVar('area')) {
+				$area = $chain->getRequest()->getPostVar('area');
+			}
+			/** @var  HttpRequest $request */
+			$module = false;
+			if ($request->hasAttachedVar('module')) {
+				$module = $request->getAttachedVar('module');
+			}
+			if (
+				$area
+				&& $this->checkControllerName($area, $chain->getPathController(), $module)
+			) {
+				return $area;
+			} elseif ($area) {
+				HeaderUtils::sendHttpStatus(new HttpStatus(HttpStatus::CODE_404));
+				return $this->notfoundController;
+			}
+			return null;
+		}
+
+		protected function checkControllerName($controllerName, $path, $module = false)
+		{
+			if ($module) {
+				list($path, $class) = explode('Controllers\\', $controllerName);
+				$path = PATH_BASE;
+				return
+					$path
+					&& is_readable($path . $controllerName . EXT_CLASS);
+			}
+			return
+				ClassUtils::isClassName($controllerName)
+				&& $path
+				&& is_readable($path . $controllerName . EXT_CLASS);
+		}
+
+		protected function getControllerNameByOtherData(InterceptingChain $chain)
+		{
+			return null;
+		}
+
 		/**
 		 * @return WebAppControllerResolverHandler
 		 */
@@ -63,44 +112,6 @@
 			$this->notfoundController = $notfoundController;
 
 			return $this;
-		}
-
-		protected function getControllerNameByArea(InterceptingChain $chain)
-		{
-			$request = $chain->getRequest();
-
-			$area = null;
-			if ($request->hasAttachedVar('area')) {
-				$area = $request->getAttachedVar('area');
-			} elseif ($request->hasGetVar('area')) {
-				$area = $chain->getRequest()->getGetVar('area');
-			} elseif ($request->hasPostVar('area')) {
-				$area = $chain->getRequest()->getPostVar('area');
-			}
-
-			if (
-				$area
-				&& $this->checkControllerName($area.self::CONTROLLER_POSTFIX, $chain->getPathController())
-			) {
-				return $area.self::CONTROLLER_POSTFIX;
-			} elseif ($area) {
-				HeaderUtils::sendHttpStatus(new HttpStatus(HttpStatus::CODE_404));
-				return $this->notfoundController;
-			}
-			return null;
-		}
-
-		protected function getControllerNameByOtherData(InterceptingChain $chain)
-		{
-			return null;
-		}
-
-		protected function checkControllerName($controllerName, $path)
-		{
-			return
-				ClassUtils::isClassName($controllerName)
-				&& $path
-				&& is_readable($path.$controllerName.EXT_CLASS);
 		}
 	}
 ?>

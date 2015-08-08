@@ -40,7 +40,6 @@
 		{
 			$view	= $chain->getMav()->getView();
 			$model 	= $chain->getMav()->getModel();
-
 			if (!$view instanceof View) {
 				$viewName = $view;
 				$viewResolver = $this->getViewResolver($chain, $model);
@@ -54,22 +53,11 @@
 			if ($chain->getMav()->viewIsNormal()) {
 				$this->updateNonRedirectModel($chain, $model);
 			}
+
 			$view->render($model);
 
 			$chain->next();
 
-			return $this;
-		}
-
-		/**
-		 * Добавляет заголовок, если уже такой есть - перезаписывает
-		 *
-		 * @param string $name имя заголовка
-		 * @param string $value значение заголовка
-		 * @return WebAppViewHandler
-		 */
-		public function addHeader($name, $value) {
-			$this->headers[$name] = $value;
 			return $this;
 		}
 
@@ -89,6 +77,19 @@
 		 * @return WebAppViewHandler
 		 */
 		protected function updateNonRedirectModel(InterceptingChain $chain, Model $model) {
+			return $this;
+		}
+
+		/**
+		 * Добавляет заголовок, если уже такой есть - перезаписывает
+		 *
+		 * @param string $name имя заголовка
+		 * @param string $value значение заголовка
+		 * @return WebAppViewHandler
+		 */
+		public function addHeader($name, $value)
+		{
+			$this->headers[$name] = $value;
 			return $this;
 		}
 

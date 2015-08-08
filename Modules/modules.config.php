@@ -1,5 +1,7 @@
 <?php
 
 return [
-    'HttpRequest' => new \Modules\HttpRequest\HttpRequestModule()
+    'WebAuth' => new \Modules\WebModules\WebAuth\WebAuthModule(),
+    'HttpRequest' => new \Modules\HttpRequest\HttpRequestModule(),
+    'Welcome' => new \Modules\WebModules\Welcome\WelcomeModule(),
 ];

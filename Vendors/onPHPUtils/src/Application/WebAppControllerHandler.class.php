@@ -37,6 +37,17 @@
 		}
 
 		/**
+		 * По параметрам из chain создаем контроллер
+		 * @param InterceptingChain $chain
+		 * @return Controller
+		 */
+		protected function getController(InterceptingChain $chain)
+		{
+			$controllerName = $chain->getControllerName();
+			return $chain->getServiceLocator()->spawn($controllerName);
+		}
+
+		/**
 		 * @return ModelAndView
 		 */
 		protected function handleRequest(InterceptingChain $chain, Controller $controller) {
@@ -52,21 +63,10 @@
 		}
 
 		/**
-		 * По параметрам из chain создаем контроллер
-		 * @param InterceptingChain $chain
-		 * @return Controller
-		 */
-		protected function getController(InterceptingChain $chain) {
-			$controllerName = $chain->getControllerName();
-			return $chain->getServiceLocator()->spawn($controllerName);
-		}
-
-		/**
 		 * @return WebAppControllerHandler
 		 */
 		protected function prepairModelAndView(InterceptingChain $chain, ModelAndView $modelAndView) {
 			$controllerName = $chain->getControllerName();
-
 			if (!$modelAndView->getView()) {
 				$modelAndView->setView($controllerName);
 			}
