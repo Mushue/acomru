@@ -40,7 +40,7 @@ if (!defined('ONPHP_CLASS_CACHE_TYPE'))
 define('ONPHP_VERSION', '1.1.master');
 
 
-define('PATH_BASE', __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
+define('PATH_BASE', __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
 
 define('PATH_BIN', PATH_BASE . 'Bin' . DIRECTORY_SEPARATOR);
 define('PATH_COMPONENTS', PATH_BASE . 'Components' . DIRECTORY_SEPARATOR);
@@ -56,6 +56,8 @@ define('PATH_VIEWS', PATH_BASE . 'Views' . DIRECTORY_SEPARATOR);
 define('PATH_VENDORS', PATH_BASE . 'Vendors' . DIRECTORY_SEPARATOR);
 define('PATH_CLASSES', PATH_MODELS);
 define('PATH_LOGS', PATH_BASE . 'Logs' . DIRECTORY_SEPARATOR);
+define('PATH_CACHE', PATH_BASE . 'Cache' . DIRECTORY_SEPARATOR);
+define('PATH_CACHE_DATA', PATH_CACHE . 'Data' . DIRECTORY_SEPARATOR);
 
 define('PATH_ONPHP', PATH_VENDORS . 'onphp-framework' . DIRECTORY_SEPARATOR);
 define('PATH_ONPHP_CORE', PATH_ONPHP);
@@ -197,7 +199,9 @@ AutoloaderClassPathCache::create()
         PATH_REPOSITORIES,
         PATH_SERVICES,
         PATH_VIEWS,
-        PATH_VENDORS
+        PATH_VENDORS,
+        PATH_CACHE,
+        PATH_CACHE_DATA
     ))
     ->addPath(PATH_VENDORS . 'Whoops', '\\Whoops')
     ->addPath(PATH_MODULES, '\\Modules')
@@ -209,4 +213,4 @@ AutoloaderClassPathCache::create()
         '\\KoolKode\Util')
     ->register();
 
-require_once PATH_CONFIGURATIONS . 'application.config.php';
+require_once PATH_CONFIGURATIONS . 'Global' . DIRECTORY_SEPARATOR . 'application.config.php';

@@ -4,6 +4,8 @@
 namespace Modules\WebModules\WebAuth\Controllers;
 
 
+use KoolKode\Context\Container;
+
 class AuthController extends \BaseController
 {
     protected $methodMap = array(
@@ -26,7 +28,7 @@ class AuthController extends \BaseController
     public function loginAction(\HttpRequest $request)
     {
         /** @var \UserAuthInterface $authProvider */
-        $authProvider = \Application::get(\UserAuthInterface::class);
+        $authProvider = \Core::get(\UserAuthInterface::class);
 
         if ($request->getPost()) {
             $user = new \User();
@@ -43,19 +45,14 @@ class AuthController extends \BaseController
 
     protected function getMainMav($tpl = 'index', $path = null)
     {
-        /** @var \KoolKode\Context\Bind\Binding $binding */
-        $binding = \Application::me()->getContainer()->getBinding(\PartViewer::class);
-        $binding
-            ->resolve('resolver', new \PhpViewResolver(PATH_VIEWS, EXT_TPL))
-            ->resolve('model', $this->model);;
-        $this->model->set('part', \Application::getBound($binding));
+        $this->model->set('part', new \PartViewer(new \PhpViewResolver(PATH_VIEWS, EXT_TPL), $this->model));
         return parent::getMav($tpl, $path);
     }
 
     public function logoutAction(\HttpRequest $request)
     {
         /** @var \UserAuthInterface $authProvider */
-        $authProvider = \Application::get(\UserAuthInterface::class);
+        $authProvider = \Core::get(\UserAuthInterface::class);
 
         if ($authProvider->isAuthenticated()) {
             $authProvider->logout();

@@ -21,6 +21,8 @@ final class Application extends Singleton implements IApplication
 
     /** @var  \KoolKode\Context\Bind\ContainerBuilder */
     protected $builder;
+    /** @var  \KoolKode\Context\Scope\ScopeLoader */
+    protected $scopes;
 
     protected function __construct()
     {/*_*/
@@ -100,20 +102,37 @@ final class Application extends Singleton implements IApplication
      */
     protected function createContainer()
     {
+        $this->scopes = new \KoolKode\Context\Scope\ScopeLoader();
+
+        /**
+         * Ядро системы
+         */
         $this->builder->bind(WebKernel::class)
             ->scoped(new \KoolKode\Context\Scope\Singleton())
             ->decorate(function (WebKernel $kernel) {
                 return WebKernel::create();
             });
 
+        /**
+         * Парти вьюер
+         */
         $this->builder->bind(PartViewer::class);
 
-        $this->container = $this->builder->build();
+        /**
+         * Навигатион бар
+         */
+        $this->builder->bind(NavigationBar::class)
+            ->scoped(new \KoolKode\Context\Scope\Singleton());
 
+        $this->container = $this->builder->build();
 
         $this->container->bindInstance(IApplication::class, $this);
 
         static::$containerStack->push($this->container);
+
+        foreach ($this->scopes as $scope) {
+            $this->container->registerScope($scope);
+        }
 
         return $this;
     }
@@ -141,11 +160,19 @@ final class Application extends Singleton implements IApplication
         foreach ($moduleLoader as $module) {
             $module->boot();
             $module->build($this->builder);
+
+            if ($module instanceof \KoolKode\Context\Scope\ScopeProviderInterface) {
+                $module->loadScopes($this->scopes);
+            }
         }
 
         $this->container = $this->getContainer();
         $this->container = $this->builder->build();
         static::$containerStack->push($this->container);
+
+        foreach ($this->scopes as $scope) {
+            $this->container->registerScope($scope);
+        }
     }
 
     /**
@@ -155,5 +182,40 @@ final class Application extends Singleton implements IApplication
     {
         return $this->config;
     }
+
+    protected function createDefaultContainer(\KoolKode\Context\Bind\ContainerModuleLoader $loader, \KoolKode\Context\Scope\ScopeLoader $scopes)
+    {
+        $scopedProxies = [];
+
+        foreach ($scopes as $scope) {
+            foreach ($scope->getProxyTypeNames() as $typeName) {
+                $scopedProxies[] = $typeName;
+            }
+        }
+
+        $builder = $this->createContainerBuilder();
+    }
+
+    protected function createContainerBuilder()
+    {
+        $builder = new \KoolKode\Context\Bind\ContainerBuilder();
+
+        foreach ($this->getContainerParams() as $k => $v) {
+            $builder->setParameter($k, $v);
+        }
+
+        return $builder;
+    }
+
+    public function getContainerParams()
+    {
+        return [];
+    }
+
+    protected function bindInitialInstances(\KoolKode\Context\ContainerInterface $container)
+    {
+
+    }
+
 }
 

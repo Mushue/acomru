@@ -35,17 +35,18 @@ class WebAuthModule extends AbstractContainerModule
      */
     public function boot()
     {
-        \RouterRewrite::me()->addRoute(
-            'user-login',
-            \RouterTransparentRule::create('/login')
-                ->setDefaults(
-                    array(
-                        'area' => AuthController::class,
-                        'action' => 'login',
-                        'module' => true
+        \RouterRewrite::me()
+            ->addRoute(
+                'user-login',
+                \RouterTransparentRule::create('/login')
+                    ->setDefaults(
+                        array(
+                            'area' => AuthController::class,
+                            'action' => 'login',
+                            'module' => true
+                        )
                     )
-                )
-        )
+            )
             ->addRoute(
                 'user-logout',
                 \RouterTransparentRule::create('/logout')
@@ -58,35 +59,43 @@ class WebAuthModule extends AbstractContainerModule
                     )
             );
 
-        $kernel = \Application::get(\WebKernel::class);
+        $kernel = \Core::get(\WebKernel::class);
         $request = \RouterRewrite::me()->route(\HttpRequest::createFromGlobals());
         $kernel->dropVar(\WebKernel::OBJ_REQUEST)
             ->setRequest($request);
 
         $area = null;
 
-        $area = \Application::get(\WebKernel::class)
+        $area = $kernel
             ->getRequest()
             ->hasAttachedVar('area');
 
         if ($area) {
-            $area = \Application::get(\WebKernel::class)
+            $area = $kernel
                 ->getRequest()
                 ->getAttachedVar('area');
         }
         if (in_array($area, $this->controllers)) {
-
             /** @var \WebKernel $kernel */
             $pathTemplate = PATH_BASE . 'Modules' . DIRECTORY_SEPARATOR .
                 'WebModules' . DIRECTORY_SEPARATOR .
                 'WebAuth' . DIRECTORY_SEPARATOR .
                 'Views' . DIRECTORY_SEPARATOR;
 
-            \Application::get(\WebKernel::class)
+            $kernel
                 ->dropVar(\WebKernel::OBJ_PATH_TEMPLATE)
                 ->dropVar(\WebKernel::OBJ_PATH_TEMPLATE_DEFAULT)
                 ->setPathTemplateDefault($pathTemplate)
                 ->setPathTemplate($pathTemplate);
+        }
+
+        $authProvider = new WebUser();
+        /** @var \NavigationBar $navigationBar */
+        $navigationBar = \Core::get(\NavigationBar::class);
+        if (!$authProvider->isAuthenticated()) {
+            $navigationBar->set(new \NavigationBarElement('Войти', \RouterUrlHelper::url(array(), 'user-login')), new \PositionBarRight());
+        } else {
+            $navigationBar->set(new \NavigationBarElement('Выйти', \RouterUrlHelper::url(array(), 'user-logout')), new \PositionBarRight());
         }
     }
 

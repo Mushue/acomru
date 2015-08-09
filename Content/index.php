@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Configurations' . DIRECTORY_SEPARATOR . 'configuration.inc.php';
+require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Configurations' . DIRECTORY_SEPARATOR . 'Global' . DIRECTORY_SEPARATOR . 'configuration.inc.php';
 
 if (defined('__LOCAL_DEBUG__') && __LOCAL_DEBUG__) {
     $whoops = new \Whoops\Run();
@@ -9,32 +9,8 @@ if (defined('__LOCAL_DEBUG__') && __LOCAL_DEBUG__) {
 }
 
 try {
-
-    $request = RouterRewrite::me()->route(HttpRequest::createFromGlobals());
-    Session::start();
-
-    $webKernel = Application::me()->getContainer()->get(WebKernel::class)
-        ->dropVar(WebKernel::OBJ_REQUEST)
-        ->setRequest($request)
-        ->setPathWeb(PATH_WEB)
-        ->setPathController(PATH_CONTROLLERS)
-        ->setPathTemplate(PATH_VIEWS)
-        ->setPathTemplateDefault(PATH_VIEWS)
-        ->setServiceLocator(Application::get(ServiceLocator::class))
-        ->add(WebKernelBufferHandler::create())
-        ->add(WebKernelSessionHandler::create()
-            ->setCookieDomain(COOKIE_HOST_NAME)
-            ->setSessionName('acomru')
-        );
-
-    Application::me()->registerModules();
-
-    $webKernel->add(WebKernelAjaxHandler::create())
-        ->add(WebKernelControllerResolverHandler::create())
-        ->add(WebKernelControllerHandler::create())
-        ->add(WebKernelViewHandler::create());
-
-    $webKernel->run();
+    $core = new Core();
+    $core->run();
 
 } catch (Exception $e) {
 
