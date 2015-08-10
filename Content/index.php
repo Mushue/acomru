@@ -9,6 +9,7 @@ if (defined('__LOCAL_DEBUG__') && __LOCAL_DEBUG__) {
 }
 
 try {
+
     $core = new Core();
     $core->run();
 
