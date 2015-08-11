@@ -79,9 +79,10 @@
 			if ($module) {
 				list($path, $class) = explode('Controllers\\', $controllerName);
 				$path = PATH_BASE;
+				$filePath = str_replace('\\', DIRECTORY_SEPARATOR, $path . $controllerName . EXT_CLASS);
 				return
 					$path
-					&& is_readable($path . $controllerName . EXT_CLASS);
+					&& is_readable($filePath);
 			}
 			return
 				ClassUtils::isClassName($controllerName)
