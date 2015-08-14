@@ -7,15 +7,26 @@ class NavigationBarElement
 
     protected $url;
 
+    protected $route;
+
     /**
      * NavigationBarElement constructor.
      * @param $name
      * @param $url
      */
-    public function __construct($name, $url)
+    public function __construct($name, $url, $route)
     {
         $this->name = $name;
         $this->url = $url;
+        $this->route = $route;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRoute()
+    {
+        return $this->route;
     }
 
     /**

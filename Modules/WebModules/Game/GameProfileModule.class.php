@@ -1,63 +1,64 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: mushu_000
- * Date: 08.08.2015
- * Time: 20:22
+ * User: pgorbachev
+ * Date: 14.08.15
+ * Time: 10:25
  */
 
-namespace Modules\WebModules\WebAuth;
+namespace Modules\WebModules\Game;
+
 
 use KoolKode\Context\Bind\AbstractContainerModule;
 use KoolKode\Context\Bind\ContainerBuilder;
 use KoolKode\Context\Scope\Singleton;
+use Modules\WebModules\Game\Profile\Controllers\ProfileController;
+use Modules\WebModules\Game\Profile\UIComponents\GameProfileUIComponent;
 use Modules\WebModules\WebAuth\Classes\WebUser;
-use Modules\WebModules\WebAuth\Controllers\AuthController;
 
-class WebAuthModule extends AbstractContainerModule
+class GameProfileModule extends AbstractContainerModule
 {
     protected $controllers = array(
-        AuthController::class
+        ProfileController::class
     );
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $builder)
     {
         $builder->bind(\UserAuthInterface::class)
             ->scoped(new Singleton())
             ->to(WebUser::class);
+
+        $builder->bind(\ProfileUiComponentInterface::class)
+            ->scoped(new Singleton())
+            ->to(GameProfileUIComponent::class);
+
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function boot()
+    {
+        $this->makeRoute();
+        $this->makeTemplatePath();
+        $this->makeNavigationLink();
+    }
+
+    protected function makeRoute()
     {
         \RouterRewrite::me()
             ->addRoute(
-                'user-login',
-                \RouterTransparentRule::create('/login')
+                'profile',
+                \RouterTransparentRule::create('/profile')
                     ->setDefaults(
                         array(
-                            'area' => AuthController::class,
-                            'action' => 'login',
-                            'module' => true
-                        )
-                    )
-            )
-            ->addRoute(
-                'user-logout',
-                \RouterTransparentRule::create('/logout')
-                    ->setDefaults(
-                        array(
-                            'area' => AuthController::class,
-                            'action' => 'logout',
+                            'area' => ProfileController::class,
+                            'action' => 'index',
                             'module' => true
                         )
                     )
             );
+    }
+
+    protected function makeTemplatePath()
+    {
 
         $kernel = \Core::get(\WebKernel::class);
         $request = \RouterRewrite::me()->route(\HttpRequest::createFromGlobals());
@@ -75,11 +76,13 @@ class WebAuthModule extends AbstractContainerModule
                 ->getRequest()
                 ->getAttachedVar('area');
         }
+
         if (in_array($area, $this->controllers)) {
             /** @var \WebKernel $kernel */
             $pathTemplate = PATH_BASE . 'Modules' . DIRECTORY_SEPARATOR .
                 'WebModules' . DIRECTORY_SEPARATOR .
-                'WebAuth' . DIRECTORY_SEPARATOR .
+                'Game' . DIRECTORY_SEPARATOR .
+                'Profile' . DIRECTORY_SEPARATOR .
                 'Views' . DIRECTORY_SEPARATOR;
 
             $kernel
@@ -88,18 +91,18 @@ class WebAuthModule extends AbstractContainerModule
                 ->setPathTemplateDefault($pathTemplate)
                 ->setPathTemplate($pathTemplate);
         }
+    }
+
+    protected function makeNavigationLink()
+    {
 
         $authProvider = new WebUser();
         /** @var \NavigationBar $navigationBar */
         $navigationBar = \Core::get(\NavigationBar::class);
-        if (!$authProvider->isAuthenticated()) {
-            $navigationBar->push(new \NavigationBarElement('Войти', \RouterUrlHelper::url(array(), 'user-login'), 'user-login'), new
-            \PositionBarRight());
-        } else {
-            $navigationBar->push(new \NavigationBarElement('Выйти', \RouterUrlHelper::url(array(), 'user-logout'), 'user-logout'),
-                new
-                \PositionBarRight());
+        if ($authProvider->isAuthenticated()) {
+            $navigationBar->unshift(new \NavigationBarElement('Профиль', \RouterUrlHelper::url(array(), 'profile'),
+                'profile'),
+                new \PositionBarRight());
         }
     }
-
 }
