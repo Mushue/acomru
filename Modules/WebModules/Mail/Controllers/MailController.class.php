@@ -9,6 +9,8 @@
 namespace Modules\WebModules\Mail\Controllers;
 
 
+use Modules\WebModules\Mail\Classes\AMQPMailMessage;
+
 class MailController extends \BaseController
 {
     protected $methodMap = array(
@@ -24,6 +26,11 @@ class MailController extends \BaseController
             return $this->getMavRedirectByUrl(\RouterUrlHelper::url(array(), 'user-login'));
         }
 
+        try {
+            $message = new AMQPMailMessage();
+        } catch (Exception $e) {
+
+        }
         return $this->getMainMav('index', 'Index');
     }
 

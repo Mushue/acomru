@@ -26,6 +26,16 @@ Cache::setPeer(
 );
 //}
 
+AMQPPool::me()->addLink(
+    'local', new AMQPPecl(
+        AMQPCredentials::create()
+            ->setHost('127.0.0.1')
+            ->setPort('5432')
+            ->setLogin('guest')
+            ->setPassword('guest')
+    )
+);
+
 Logger::me()
     ->setLevel(LogLevel::finest())
     ->add(SysLogger::create())
