@@ -2,35 +2,26 @@
 /**
  * Created by PhpStorm.
  * User: pgorbachev
- * Date: 14.08.15
- * Time: 10:25
+ * Date: 18.08.15
+ * Time: 14:05
  */
 
-namespace Modules\WebModules\Game;
+namespace Modules\WebModules\Mail;
 
 
 use KoolKode\Context\Bind\AbstractContainerModule;
 use KoolKode\Context\Bind\ContainerBuilder;
-use KoolKode\Context\Scope\Singleton;
-use Modules\WebModules\Game\Profile\Controllers\ProfileController;
-use Modules\WebModules\Game\Profile\UIComponents\GameProfileUIComponent;
+use Modules\WebModules\Mail\Controllers\MailController;
 use Modules\WebModules\WebAuth\Classes\WebUser;
 
-class GameProfileModule extends AbstractContainerModule
+class MailModule extends AbstractContainerModule
 {
     protected $controllers = array(
-        ProfileController::class
+        MailController::class
     );
 
     public function build(ContainerBuilder $builder)
     {
-        $builder->bind(\UserAuthInterface::class)
-            ->scoped(new Singleton())
-            ->to(WebUser::class);
-
-        $builder->bind(\ProfileUiComponentInterface::class)
-            ->scoped(new Singleton())
-            ->to(GameProfileUIComponent::class);
 
     }
 
@@ -45,11 +36,11 @@ class GameProfileModule extends AbstractContainerModule
     {
         \RouterRewrite::me()
             ->addRoute(
-                'profile',
-                \RouterTransparentRule::create('/profile')
+                'mail',
+                \RouterTransparentRule::create('/mail')
                     ->setDefaults(
                         array(
-                            'area' => ProfileController::class,
+                            'area' => MailController::class,
                             'action' => 'index',
                             'module' => true
                         )
@@ -81,8 +72,7 @@ class GameProfileModule extends AbstractContainerModule
             /** @var \WebKernel $kernel */
             $pathTemplate = PATH_BASE . 'Modules' . DIRECTORY_SEPARATOR .
                 'WebModules' . DIRECTORY_SEPARATOR .
-                'Game' . DIRECTORY_SEPARATOR .
-                'Profile' . DIRECTORY_SEPARATOR .
+                'Mail' . DIRECTORY_SEPARATOR .
                 'Views' . DIRECTORY_SEPARATOR;
 
             $kernel
@@ -104,8 +94,8 @@ class GameProfileModule extends AbstractContainerModule
 
         if ($authProvider->isAuthenticated()) {
 
-            $navigationBar->unshift(new \NavigationBarElement('Профиль', \RouterUrlHelper::url(array(), 'profile'),
-                'profile'),
+            $navigationBar->unshift(new \NavigationBarElement('Почта' . $postHtml, \RouterUrlHelper::url(array(),
+                'mail'), 'mail'),
                 new \PositionBarRight());
         }
     }
