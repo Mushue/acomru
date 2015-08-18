@@ -31,9 +31,7 @@ class AMQPMailMessage
 
         $this->queue = new \AMQPQueue($this->channel);
 
-        $this->queue->declareQueue();
 
-        $this->queue->bind('user.mail', 'user.1.mail');
 
     }
 
@@ -42,6 +40,6 @@ class AMQPMailMessage
      */
     public function get()
     {
-        return false;// $this->queue->get();
+        return $this->queue->get();
     }
 }
