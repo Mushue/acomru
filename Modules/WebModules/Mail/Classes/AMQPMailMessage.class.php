@@ -23,17 +23,18 @@ class AMQPMailMessage
      */
     public function __construct()
     {
-        /*
+
         $this->messageServer = new \AMQPConnection();
         $this->messageServer->connect();
 
         $this->channel = new \AMQPChannel($this->messageServer);
+
         $this->queue = new \AMQPQueue($this->channel);
 
         $this->queue->declareQueue();
 
-        $this->queue->bind('user.mail','user.1.#');
-        */
+        $this->queue->bind('user.mail', 'user.1.mail');
+
     }
 
     /**

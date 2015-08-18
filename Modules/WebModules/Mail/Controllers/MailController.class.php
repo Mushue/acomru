@@ -28,6 +28,8 @@ class MailController extends \BaseController
 
         try {
             $message = new AMQPMailMessage();
+            var_dump($message->get());
+            die;
         } catch (Exception $e) {
 
         }
